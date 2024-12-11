@@ -1,13 +1,34 @@
 import React from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Nav = () => {
+  const navigate = useNavigate();
+
+  const handleCartClick = () => navigate('/');
+  const handleCategoriasClick = () => navigate('/categorias');
+
   return (
-    <nav className="bg-gray-800 text-white py-4 shadow-lg">
-      <div className="container mx-auto flex items-center space-x-3 px-6">
-        <span className="text-2xl font-bold">Gestión de Productos</span>
-        <div className="bg-gray-700 hover:bg-gray-600 w-8 h-8 flex items-center justify-center rounded-full transition duration-300">
-          <ShoppingCart className="w-5 h-5 text-white" />
+    <nav className="bg-gradient-to-r from-emerald-200 to-lime-200 text-white py-4 shadow-xl">
+      <div className="container mx-auto flex items-center justify-between px-6">
+        <span className="text-3xl font-bold tracking-wide text-gray-700">
+          Gestión de Productos
+        </span>
+
+        <div className="flex items-center space-x-4">
+          <div
+            className="bg-white hover:bg-gray-200 w-10 h-10 flex items-center justify-center rounded-full shadow-md transition-all duration-300 transform hover:scale-105 cursor-pointer"
+            onClick={handleCartClick}
+          >
+            <ShoppingCart className="w-5 h-5 text-indigo-400" />
+          </div>
+
+          <div
+            className="bg-white hover:bg-gray-200 px-5 py-2 rounded-lg text-indigo-400 font-semibold transition-all duration-300 transform hover:scale-105 cursor-pointer"
+            onClick={handleCategoriasClick}
+          >
+            Categorías
+          </div>
         </div>
       </div>
     </nav>
