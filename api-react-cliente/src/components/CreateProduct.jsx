@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useStore from '../stores/store';
 import * as Dialog from '@radix-ui/react-dialog';
-import { log } from 'three/examples/jsm/nodes/Nodes.js';
 
 
 const CreateProduct = () => {
