@@ -31,4 +31,14 @@ export class ProductsService {
   async remove(id: number): Promise<void> {
     await this.productRepository.delete(id);
   }
+
+
+  async saveImage(productId: number, fileUrl: string): Promise<Product> {
+    const product = await this.productRepository.findOneBy({ id: productId });
+    if (!product) {
+      throw new Error('Producto no encontrado');
+    }
+    product.fileUrl = fileUrl;
+    return this.productRepository.save(product);
+  }
 }

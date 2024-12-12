@@ -2,6 +2,9 @@ const API_BASE_URL = 'http://localhost:3000/';
 
 export const endpoints = {
   products: `${API_BASE_URL}products`,
+  categorias:`${API_BASE_URL}categorias`,
+
+
 };
 
 //Constantes

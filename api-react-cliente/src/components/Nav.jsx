@@ -7,6 +7,8 @@ const Nav = () => {
 
   const handleCartClick = () => navigate('/');
   const handleCategoriasClick = () => navigate('/categorias');
+  const handleProductosClick = () => navigate('/productos');
+
 
   return (
     <nav className="bg-gradient-to-r from-emerald-200 to-lime-200 text-white py-4 shadow-xl">
@@ -23,11 +25,26 @@ const Nav = () => {
             <ShoppingCart className="w-5 h-5 text-indigo-400" />
           </div>
 
+
+          <div
+            className="bg-white hover:bg-gray-200 px-5 py-2 rounded-lg text-indigo-400 font-semibold transition-all duration-300 transform hover:scale-105 cursor-pointer"
+            onClick={handleCartClick}
+          >
+            crear productos
+          </div>
+
           <div
             className="bg-white hover:bg-gray-200 px-5 py-2 rounded-lg text-indigo-400 font-semibold transition-all duration-300 transform hover:scale-105 cursor-pointer"
             onClick={handleCategoriasClick}
           >
-            Categorías
+             crear Categorías
+          </div>
+
+          <div
+            className="bg-white hover:bg-gray-200 px-5 py-2 rounded-lg text-indigo-400 font-semibold transition-all duration-300 transform hover:scale-105 cursor-pointer"
+            onClick={handleProductosClick}
+          >
+            productos
           </div>
         </div>
       </div>

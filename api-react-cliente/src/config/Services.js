@@ -27,10 +27,15 @@ export  const productService = {
   
   crearProducto: async (datosProducto) => {
     try {
+
+      console.log("Esta es la data ==> que se envia:");
+      datosProducto.forEach((value, key) => {
+        console.log(key + ": " + value);
+      });  
+      
       const respuesta = await fetch(endpoints.products, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datosProducto),
+        body: datosProducto 
       });
       if (!respuesta.ok){
         throw new Error(MENSAJES_ERROR.RESPUESTA_NO_SATISFACTORIA);
@@ -45,8 +50,7 @@ export  const productService = {
     try {
       const respuesta = await fetch(`${endpoints.products}/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datosProducto),
+        body: datosProducto,
       });
       if (!respuesta.ok) {
         throw new Error(MENSAJES_ERROR.RESPUESTA_NO_SATISFACTORIA);
@@ -72,6 +76,84 @@ export  const productService = {
     }
   },
   
+};
+
+
+
+export const CategoriaService = {
+  getTodasLasCategorias: async () => {
+    try {
+      const respuesta = await fetch(endpoints.categorias);
+      if (!respuesta.ok) {
+        throw new Error(MENSAJES_ERROR.RESPUESTA_NO_SATISFACTORIA);
+      }
+      return await respuesta.json();
+    } catch (error) {
+      console.error('Error al obtener las categorías:', error);
+    }
+  },
+
+  getCategoria: async (id) => {
+    try {
+      const respuesta = await fetch(`${endpoints.categorias}/${id}`);
+      if (!respuesta.ok) {
+        throw new Error(MENSAJES_ERROR.RESPUESTA_NO_SATISFACTORIA);
+      }
+      return await respuesta.json();
+    } catch (error) {
+      console.error('Error al obtener la categoría:', error);
+    }
+  },
+
+  crearCategoria: async (datosCategoria) => {
+    try {
+      
+      const respuesta = await fetch(endpoints.categorias, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body:JSON.stringify({ nombre:  datosCategoria }), 
+
+      });
+      if (!respuesta.ok) {
+        throw new Error(MENSAJES_ERROR.RESPUESTA_NO_SATISFACTORIA);
+      }
+      return await respuesta.json();
+    } catch (error) {
+      console.error('Error al crear la categoría:', error);
+    }
+  },
+
+  actualizarCategoria: async (id, datosCategoria) => {
+    try {
+      const respuesta = await fetch(`${endpoints.categorias}/${id}`, {
+        method: 'PUT',        
+        body:JSON.stringify({ nombre:  datosCategoria }), 
+        
+      });
+      if (!respuesta.ok) {
+        throw new Error(MENSAJES_ERROR.RESPUESTA_NO_SATISFACTORIA);
+      }
+      return await respuesta.json();
+    } catch (error) {
+      console.error('Error al actualizar la categoría:', error);
+    }
+  },
+
+  eliminarCategoria: async (id) => {
+    try {
+      const respuesta = await fetch(`${endpoints.categorias}/${id}`, {
+        method: 'DELETE',
+      });
+      if (!respuesta.ok) {
+        throw new Error(MENSAJES_ERROR.RESPUESTA_NO_SATISFACTORIA);
+      }
+      return await respuesta.json();
+    } catch (error) {
+      console.error('Error al eliminar la categoría:', error);
+    }
+  },
 };
   
 

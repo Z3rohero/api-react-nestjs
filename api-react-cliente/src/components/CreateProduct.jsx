@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import useStore from '../stores/store';
 import * as Dialog from '@radix-ui/react-dialog';
 
-
 const CreateProduct = () => {
   const [selectedProduct, setSelectedProduct] = useState(null); 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [errors, setErrors] = useState({});
 
-
   const {
     productos,
+    categorias,
     crearProducto,
     actualizarProducto,
     obtenerTodosLosProductos,
+    obtenerTodasLasCategorias,
     eliminarProducto,
   } = useStore();
 
@@ -23,12 +23,17 @@ const CreateProduct = () => {
     categoria: '',
     precio: '',
     cantidad: '',
+    file: null 
   });
 
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, files } = e.target;
+
+    if (name === 'file') {
+      setFormData({ ...formData, [name]: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
 
     if (errors[name]) {
       setErrors({ ...errors, [name]: null });
@@ -37,18 +42,16 @@ const CreateProduct = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { nombre, descripcion, precio, cantidad, categoria } = formData;
+    const { nombre, descripcion, precio, cantidad, categoria, file } = formData;
 
     const newErrors = {};
     if (!nombre) newErrors.nombre = 'El nombre es obligatorio.';
     if (!descripcion) newErrors.descripcion = 'La descripción es obligatoria.';
+    if (!file) newErrors.file = 'La imagen es obligatoria en formato png.';
     if (!precio || isNaN(precio)) newErrors.precio = 'El precio es obligatorio y debe ser numérico.';
     if (!cantidad || isNaN(cantidad)) newErrors.cantidad = 'La cantidad es obligatoria y debe ser numérica.';
-    if (!categoria) {
-      newErrors.categoria = 'La categoría es obligatoria.';
-    } else if (!isNaN(categoria)) {
-      newErrors.categoria = 'La categoría no puede ser un número.';
-    }
+    if (!categoria) newErrors.categoria = 'La categoría es obligatoria.';
+    
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -56,41 +59,37 @@ const CreateProduct = () => {
       return;
     }
 
+    const formDataToSubmit = new FormData(); 
+    formDataToSubmit.append('nombre', nombre);
+    formDataToSubmit.append('descripcion', descripcion);
+    formDataToSubmit.append('categoria', categoria);
+    formDataToSubmit.append('precio', parseFloat(precio));
+    formDataToSubmit.append('cantidad', parseInt(cantidad, 10));
+    formDataToSubmit.append('file', file); 
 
     if (selectedProduct) {
-      // Actualizar producto existente
-      console.log("entroo 23")
-      actualizarProducto(selectedProduct, {
-        nombre,
-        descripcion,
-        categoria,
-        precio: parseFloat(precio),
-        cantidad: parseInt(cantidad, 10),
-      });
+      // Update existing product
+      actualizarProducto(selectedProduct, formDataToSubmit);
       setSelectedProduct(null);
     } else {
-      // Crear nuevo producto
-      crearProducto({
-        nombre,
-        descripcion,
-        categoria,
-        precio: parseFloat(precio),
-        cantidad: parseInt(cantidad, 10),
-      });
+      formDataToSubmit.forEach((value, key) => {
+        console.log(key + ": " + value);
+      });      
+      crearProducto(formDataToSubmit);
     }
 
     setFormData({
       nombre: '',
       descripcion: '',
-      categoria: '',
+      categoria: '', 
       precio: '',
       cantidad: '',
+      file: null
     });
     setSelectedProduct(null);
   };
 
   const handleEdit = (producto) => {
-    console.log("entroo")
     setSelectedProduct(producto.id);
     setFormData({
       nombre: producto.nombre,
@@ -98,6 +97,7 @@ const CreateProduct = () => {
       categoria: producto.categoria,
       precio: producto.precio.toString(),
       cantidad: producto.cantidad.toString(),
+      file: null 
     });
   };
 
@@ -107,12 +107,12 @@ const CreateProduct = () => {
   };
 
   useEffect(() => {
-    obtenerTodosLosProductos();
+    obtenerTodosLosProductos();  
+    obtenerTodasLasCategorias(); 
   }, []);
 
   return (
     <div className="max-w-6xl mx-auto bg-gray-100 rounded-lg shadow-xl">
-      {/* Formulario para crear o actualizar productos */}
       <div className="bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-3xl font-bold text-center text-gray-700 mb-6">
           {selectedProduct ? 'Actualizar Producto' : 'Crear Producto'}
@@ -132,6 +132,7 @@ const CreateProduct = () => {
               className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-gray-500 focus:border-gray-500 text-gray-700 shadow-sm"
             />
           </div>
+
           <div>
             <label htmlFor="descripcion" className="block text-lg font-medium text-gray-700">
               Descripción
@@ -146,21 +147,28 @@ const CreateProduct = () => {
               className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-gray-500 focus:border-gray-500 text-gray-700 shadow-sm"
             ></textarea>
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="categoria" className="block text-lg font-medium text-gray-700">
                 Categoría
               </label>
-              <input
-                type="text"
+              <select
                 id="categoria"
                 name="categoria"
                 value={formData.categoria}
                 onChange={handleChange}
-                placeholder="Ingresa la categoría"
                 className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-gray-500 focus:border-gray-500 text-gray-700 shadow-sm"
-              />
+              >
+                <option value="">Seleccione una categoría</option>
+                {categorias.map((categoria) => (
+                  <option key={categoria.id} value={categoria.id}>
+                    {categoria.nombre}
+                  </option>
+                ))}
+              </select>
             </div>
+
             <div>
               <label htmlFor="precio" className="block text-lg font-medium text-gray-700">
                 Precio
@@ -176,6 +184,7 @@ const CreateProduct = () => {
               />
             </div>
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="cantidad" className="block text-lg font-medium text-gray-700">
@@ -192,6 +201,22 @@ const CreateProduct = () => {
               />
             </div>
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="file" className="block text-lg font-medium text-gray-700">
+                Imagen
+              </label>
+              <input
+                type="file"
+                id="file"
+                name="file"
+                onChange={handleChange}
+                className="mt-2 block w-full border border-gray-300 rounded-md px-4 py-3 focus:ring-gray-500 focus:border-gray-500 text-gray-700 shadow-sm"
+              />
+            </div>
+          </div>
+
           <div className="flex justify-center">
             <button
               type="submit"
@@ -255,13 +280,13 @@ const CreateProduct = () => {
                 <td className="py-4 px-6 text-center">
                   <button
                     onClick={() => handleEdit(producto)}
-                    className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:ring-2 focus:ring-gray-400 mr-2"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
                   >
                     Editar
                   </button>
                   <button
                     onClick={() => handleEliminar(producto.id)}
-                    className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:ring-2 focus:ring-red-400"
+                    className="bg-red-500 text-white px-4 py-2 rounded-md ml-2"
                   >
                     Eliminar
                   </button>

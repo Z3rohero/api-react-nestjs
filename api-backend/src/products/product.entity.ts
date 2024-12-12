@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Entity, Column,ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Categoria } from '../categorias/categoria.entity'
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
@@ -19,4 +19,10 @@ export class Product {
 
   @Column('int')
   cantidad: number;
+
+  @Column({ nullable: true })
+  fileUrl: string;
+
+  @ManyToOne(() => Categoria, (categoria) => categoria.productos)
+  categoriaRel: Categoria; 
 }

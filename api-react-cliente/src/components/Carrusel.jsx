@@ -1,9 +1,24 @@
-// CardCarousel.js
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import Card from "./Card";  
+import useStore from '../stores/store';
+
 
 export default function CardCarousel() {
+
+  useEffect(() => {
+    obtenerTodosLosProductos();
+  }, []);
+
+  const {
+    productos,
+    crearProducto,
+    actualizarProducto,
+    obtenerTodosLosProductos,
+    eliminarProducto,
+  } = useStore();
+
+
   /*configuración para la animación 3D*/
   const carouselVariants = {
     initial: {
@@ -17,6 +32,8 @@ export default function CardCarousel() {
       },
     },
   };
+  console.log(`estos son los productos  ${JSON.stringify(productos)}`)
+
 
   return (
     <div className="relative flex justify-center items-center">
@@ -28,76 +45,16 @@ export default function CardCarousel() {
         animate="animate"
         style={{ perspective: "1200px" }}
       >
-        <Card
-          bgColor="bg-blue-300"
-          title="Product 1"
-          imageSrc="https://via.placeholder.com/256"
-          description="This is a product description"
-        />
-        <Card
-          bgColor="bg-green-300"
-          title="Product 2"
-          imageSrc="https://via.placeholder.com/256"
-          description="This is another product description"
-        />
-        <Card
-          bgColor="bg-red-300"
-          title="Product 3"
-          imageSrc="/../public/images/tenis_prueba.png"
-          description="Here is a description for the third product"
-        />
-            <Card
-          bgColor="bg-blue-300"
-          title="Product 1"
-          imageSrc="https://via.placeholder.com/256"
-          description="This is a product description"
-        />
-        <Card
-          bgColor="bg-green-300"
-          title="Product 2"
-          imageSrc="https://via.placeholder.com/256"
-          description="This is another product description"
-        />
-        <Card
-          bgColor="bg-red-300"
-          title="Product 3"
-          imageSrc="/../public/images/tenis_prueba.png"
-          description="Here is a description for the third product"
-        />    <Card
-        bgColor="bg-blue-300"
-        title="Product 1"
-        imageSrc="https://via.placeholder.com/256"
-        description="This is a product description"
-      />
-      <Card
-        bgColor="bg-green-300"
-        title="Product 2"
-        imageSrc="https://via.placeholder.com/256"
-        description="This is another product description"
-      />
-      <Card
-        bgColor="bg-red-300"
-        title="Product 3"
-        imageSrc="/../public/images/tenis_prueba.png"
-        description="Here is a description for the third product"
-      />    <Card
-      bgColor="bg-blue-300"
-      title="Product 1"
-      imageSrc="https://via.placeholder.com/256"
-      description="This is a product description"
-    />
-    <Card
-      bgColor="bg-green-300"
-      title="Product 2"
-      imageSrc="https://via.placeholder.com/256"
-      description="This is another product description"
-    />
-    <Card
-      bgColor="bg-red-300"
-      title="Product 3"
-      imageSrc="/../public/images/tenis_prueba.png"
-      description="Here is a description for the third product"
-    />
+
+          {productos.map((producto) => (
+                <Card key = {producto.id}
+                bgColor="bg-green-300"
+                title="Product 2"
+                imageSrc={producto.fileUrl}
+                description={producto.descripcion}>
+                </Card>
+          ))}
+    
       </motion.div>
     </div>
   );
