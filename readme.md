@@ -51,3 +51,6 @@ npm run dev
 
 ## Captura de pantalla
 ![Descripción de la imagen](/public/images/image.png)
+![Descripción de la imagen](/public/images/image1.png)
+![Descripción de la imagen](/public/images/image2.png)
+![Descripción de la imagen](/public/images/image3.png)
